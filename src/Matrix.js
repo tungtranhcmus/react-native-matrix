@@ -71,6 +71,20 @@ class Matrix {
         // this.updateDisplayName(displayName);
     }
 
+    initClientWithUserNamePassword({ baseUrl, username, password }) {
+        const guest = sdk.createClient({ baseUrl }).loginWithPassword(username, password)
+            .then(function (result) {
+                this.client = matrixJsSdk.createClient({
+                    baseUrl: homeserver,
+                    accessToken: result.access_token,
+                    userId: result.user_id
+                })
+                api.auth.setBaseURL(baseUrl);
+                api.auth.setAccessToken(result.access_token);
+                // this.updateDisplayName(displayName);
+            })
+    }
+
     async startClient(syncTime) {
         this.client.on('Room.timeline', (event, room, toStartOfTimeline) => {
             if (this.timelineChatsCallback) {
